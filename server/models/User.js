@@ -9,6 +9,7 @@ let usuarioSchema = new Schema({
     }, 
     email: {
         type: String, 
+        unique: true,
         required: [true, 'correo necesario']
     },
     password: {
@@ -17,15 +18,20 @@ let usuarioSchema = new Schema({
     },
     img: {
         type: String,
+        required: false
     }, 
     role: {
-
+        type: String,
+        default: 'USER_ROLE'
     },
     estado: {
-
+        type: Boolean,
+        default: true
     },
     google:{
         type: Boolean,
-        required: [true, 'autenticación requerida']
+        required: [false, 'autenticación requerida']
     }
 });
+
+module.exports = mongoose.model('usuario', usuarioSchema);
