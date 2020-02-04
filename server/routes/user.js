@@ -17,7 +17,7 @@ app.get("/usuario", function(req, res) {
 
   // de esta manera estamos específiando que solo queremos recibir esos keys: nombre, email
   //Usuario.find({}, "nombre email")
-  Usuario.find({})
+  Usuario.find({ estado: true })
     //  con esto implementamos la paginación, pero además damos la opción de elegir cuantos mostrar
     // en la ruta se llamaría de esta manera localhost:4000/usuario?=desde3
     .skip(desde)
@@ -31,7 +31,7 @@ app.get("/usuario", function(req, res) {
       }
 
       //obtener la cuenta de la colección
-      Usuario.count({}, (err, conteo) => {
+      Usuario.count({ estado: true }, (err, conteo) => {
         res.json({
           ok: true,
           usuarios,
@@ -95,20 +95,40 @@ app.put("/usuario/:id", function(req, res) {
 
 app.delete("/usuario/:id", function(req, res) {
   let id = req.params.id;
+  //let body = _.pick(req.body, ["estado"]);
 
-  Usuario.findByIdAndRemove(id, (err, deletedUser) => {
-    if (err) {
-      return res.status(400).json({
-        ok: false,
-        err
+  let updatedState = {
+    estado: "false"
+  };
+
+  //Usuario.findByIdAndRemove(id, (err, deletedUser) => {
+  Usuario.findByIdAndUpdate(
+    id,
+    updatedState,
+    { new: true },
+    (err, deletedUser) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err
+        });
+      }
+
+      if (!deletedUser) {
+        return res.status(400).json({
+          ok: false,
+          err: {
+            message: "Usuario no encontrado"
+          }
+        });
+      }
+
+      res.json({
+        ok: true,
+        deletedUser
       });
     }
-
-    res.json({
-      ok: true,
-      deletedUser
-    });
-  });
+  );
 });
 
 module.exports = app;
