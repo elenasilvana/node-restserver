@@ -4,7 +4,9 @@ const bcrypt = require("bcrypt");
 const _ = require("underscore");
 const Usuario = require("../models/User");
 
-app.get("/", function(req, res) {});
+app.get("/", function(req, res) {
+  res.send({ message: "api listening" });
+});
 
 app.get("/usuario", function(req, res) {
   //desde qué registro
